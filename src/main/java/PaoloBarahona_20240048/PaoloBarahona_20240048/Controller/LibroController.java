@@ -1,7 +1,9 @@
 package PaoloBarahona_20240048.PaoloBarahona_20240048.Controller;
 
+import PaoloBarahona_20240048.PaoloBarahona_20240048.Entities.LibroEntities;
 import PaoloBarahona_20240048.PaoloBarahona_20240048.Exceptions.CampoDuplicado;
 import PaoloBarahona_20240048.PaoloBarahona_20240048.Exceptions.LibroNotFound;
+import PaoloBarahona_20240048.PaoloBarahona_20240048.Models.ApiResponse.ApiResponse;
 import PaoloBarahona_20240048.PaoloBarahona_20240048.Models.DTO.LibroDTO;
 import PaoloBarahona_20240048.PaoloBarahona_20240048.Services.LibroService;
 import jakarta.servlet.http.HttpServlet;
@@ -40,6 +42,13 @@ public class LibroController {
         }
         //si esta bien se regresa el nombre del metodo que creamos que en este casi seria libro
         return ResponseEntity.ok(libro);
+    }
+
+    @GetMapping("/getDataLibro/{id}")
+    public ResponseEntity<ApiResponse<LibroEntities>>getLibroById(@PathVariable Long id){
+        LibroEntities libroEntities = service.getLibroById(id);
+        ApiResponse<LibroEntities> response = new ApiResponse<>(true, "Libro encontrado", libroEntities);
+        return ResponseEntity.ok(response);
     }
     //Esto seria el endpoint para ir a agregar datos a la tabla
     @PostMapping("/newLibro")
@@ -117,7 +126,7 @@ public class LibroController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of(
                     "Status", "Error",
-                    "message", "Error al eliminar categoria"
+                    "message", "Error al eliminar categoria",
                     "detail", e.getMessage()
             ));
         }

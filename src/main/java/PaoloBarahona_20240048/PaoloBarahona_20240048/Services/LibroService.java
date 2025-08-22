@@ -7,6 +7,7 @@ import PaoloBarahona_20240048.PaoloBarahona_20240048.Repositories.LibroRepositor
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,22 @@ public class LibroService {
                 .collect(Collectors.toList());
     }
 
+    public LibroDTO insert(@Valid LibroDTO jsonData){
+        if (jsonData == null){
+            throw new IllegalArgumentException("El libro no puede ser nulo");
+        }
+        try {
+            LibroEntities libroEntities = convertirAEntity(jsonData);
+            LibroEntities librosave = repo.save(libroEntities);
+            return convertirADTO(librosave);
+        }catch (Exception e){
+            log.error("Error al registrar libro. " + e.getMessage());
+            throw new LibroNotFound("Error al registrar el libro" + e.getMessage());
+        }
+    }
+
+
+
     public LibroDTO update(Long id, @Valid LibroDTO jsonDTO){
         if (jsonDTO == null){
             throw new IllegalArgumentException("El libro no puede ser nulo");
@@ -42,6 +59,43 @@ public class LibroService {
     }
 
     public boolean delete (Long id){
-
+        try{
+            LibroEntities objEntity = repo.findById(id).orElse(null);
+            if (objEntity != null){
+                repo.deleteById(id);
+                return true;
+            }
+            return false;
+        }catch (EmptyResultDataAccessException e){
+            throw new EmptyResultDataAccessException("No se encontro ningun libro con ID: " + id , 1);
+        }
     }
+
+    private LibroDTO convertirADTO(LibroEntities objEntities){
+        LibroDTO dto = new LibroDTO();
+        objEntities.setId(objEntities.getId());
+        objEntities.setTitulo(objEntities.getTitulo());
+        objEntities.setIsbn(objEntities.getIsbn());
+        objEntities.setAño_publicacion(objEntities.getAño_publicacion());
+        objEntities.setGenero(objEntities.getGenero());
+        objEntities.setAutor_id(objEntities.getAutor_id());
+        return dto;
+    }
+
+    private LibroEntities convertirAEntity(@Valid LibroDTO json){
+        LibroEntities objEntity = new LibroEntities();
+        objEntity.setId(json.getId());
+        objEntity.setTitulo(json.getTitulo());
+        objEntity.setIsbn(json.getIsbn());
+        objEntity.setAño_publicacion(json.getAño_publicacion());
+        objEntity.setGenero(json.getGenero());
+        objEntity.setAutor_id(json.getAutor_id());
+        return objEntity;
+    }
+
+    public LibroEntities getLibroById(Long id) {
+        return repo.findById(id).orElseThrow(()-> new LibroNotFound("El libro no fue encontrado con id: " + id + "no existe"));
+    }
+
 }
+
