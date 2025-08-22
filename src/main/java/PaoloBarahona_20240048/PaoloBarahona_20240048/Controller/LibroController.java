@@ -44,7 +44,7 @@ public class LibroController {
         return ResponseEntity.ok(libro);
     }
 
-    @GetMapping("/getDataLibro/{id}")
+    @GetMapping("/getDataLibros/{id}")
     public ResponseEntity<ApiResponse<LibroEntities>>getLibroById(@PathVariable Long id){
         LibroEntities libroEntities = service.getLibroById(id);
         ApiResponse<LibroEntities> response = new ApiResponse<>(true, "Libro encontrado", libroEntities);
@@ -105,7 +105,7 @@ public class LibroController {
         }
     }
 
-    @DeleteMapping("/deletelibro/{id}")
+    @DeleteMapping("/deletelibros/{id}")
     public ResponseEntity<Map<String, Object>>eliminarlibro(@PathVariable Long id){
         try {
             if (!service.delete(id)){
