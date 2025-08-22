@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,7 +52,6 @@ public class LibroService {
 
         LibroEntities libroData = repo.findById(id).orElseThrow(()->
                 new LibroNotFound("Libro no encontrado"));
-        libroData.setId(jsonDTO.getId());
         libroData.setTitulo(jsonDTO.getTitulo());
         libroData.setIsbn(jsonDTO.getIsbn());
         libroData.setAño_publicacion(jsonDTO.getAño_publicacion());
@@ -73,12 +75,12 @@ public class LibroService {
 
     private LibroDTO convertirADTO(LibroEntities objEntities){
         LibroDTO dto = new LibroDTO();
-        objEntities.setId(objEntities.getId());
-        objEntities.setTitulo(objEntities.getTitulo());
-        objEntities.setIsbn(objEntities.getIsbn());
-        objEntities.setAño_publicacion(objEntities.getAño_publicacion());
-        objEntities.setGenero(objEntities.getGenero());
-        objEntities.setAutor_id(objEntities.getAutor_id());
+        dto.setId(objEntities.getId());
+        dto.setTitulo(objEntities.getTitulo());
+        dto.setIsbn(objEntities.getIsbn());
+        dto.setAño_publicacion(objEntities.getAño_publicacion());
+        dto.setGenero(objEntities.getGenero());
+        dto.setAutor_id(objEntities.getAutor_id());
         return dto;
     }
 
@@ -95,6 +97,12 @@ public class LibroService {
 
     public LibroEntities getLibroById(Long id) {
         return repo.findById(id).orElseThrow(()-> new LibroNotFound("El libro no fue encontrado con id: " + id + "no existe"));
+    }
+
+    public Page <LibroDTO> getAllLibros(int page, int size){
+        Pageable pageable = QPageRequest.of(page, size);
+        Page<LibroEntities>pageEntity = repo.findAll(pageable);
+        return pageEntity.map(this::convertirADTO);
     }
 
 }

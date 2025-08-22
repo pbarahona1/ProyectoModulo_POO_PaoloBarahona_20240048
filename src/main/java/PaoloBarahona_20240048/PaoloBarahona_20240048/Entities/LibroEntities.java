@@ -25,11 +25,11 @@ public class LibroEntities {
     private String isbn;
 
     @Column(name = "AÑO_PUBLICACION")
-    private Number año_publicacion;
+    private int año_publicacion;
 
     @Column(name = "GENERO")
     private String genero;
 
     @Column(name = "AUTOR_ID")
-    private Number autor_id;
+    private int autor_id;
 }

@@ -20,11 +20,11 @@ public class LibroDTO {
     private String isbn;
 
     @NotNull
-    private Number año_publicacion;
+    private int año_publicacion;
 
     @NotNull
     private String genero;
 
     @NotNull
-    private Number autor_id;
+    private int autor_id;
 }

@@ -34,13 +34,13 @@ public class LibroController {
     private ResponseEntity<List<LibroDTO>>getdata(){
         //Aqui le damos un nombre al metodo getAllLibros
         List<LibroDTO> libro = service.getAllLibros();
-        //Y aqui hacemor la validacion
+        //Y aqui hacemos la validacion
         if (libro == null){
             ResponseEntity.badRequest().body(Map.of(
                     "Status", "No hay libros registrados"
             ));
         }
-        //si esta bien se regresa el nombre del metodo que creamos que en este casi seria libro
+        //si esta bien se regresa el nombre del metodo que creamos que en este caso seria libro
         return ResponseEntity.ok(libro);
     }
 
